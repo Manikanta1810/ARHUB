@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
-const UserResourceTable = ({ users, currentPage, itemsPerPage, onPageChange, onDeactivate }) => {
+const FeedbackTable = ({ feedbacks, currentPage, itemsPerPage, onPageChange }) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = feedbacks.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="overflow-x-auto">
@@ -15,24 +15,19 @@ const UserResourceTable = ({ users, currentPage, itemsPerPage, onPageChange, onD
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sl No</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Username</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Resources Shared</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Message</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Rating</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {currentItems.map((user, index) => (
-            <tr key={user.id}>
+          {currentItems.map((feedback, index) => (
+            <tr key={feedback.id}>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{indexOfFirstItem + index + 1}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.resourcesShared}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{feedback.username}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <button
-                  onClick={() => onDeactivate(user.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                >
-                  Deactivate
-                </button>
+                {feedback.message.length > 10 ? `${feedback.message.substring(0, 20)}...` : feedback.message}
               </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{feedback.rating}/5</td>
             </tr>
           ))}
         </tbody>
@@ -108,47 +103,45 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
-const AdminUserManagement = () => {
+const AdminFeedbackSystem = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   // Mock data - replace this with actual data fetching logic
-  const users = [
-    { id: 1, username: "user1", resourcesShared: 15 },
-    { id: 2, username: "user2", resourcesShared: 7 },
-    { id: 3, username: "user3", resourcesShared: 22 },
-    { id: 4, username: "user4", resourcesShared: 5 },
-    { id: 5, username: "user5", resourcesShared: 18 },
-    { id: 6, username: "user6", resourcesShared: 9 },
-    { id: 7, username: "user7", resourcesShared: 13 },
-    { id: 8, username: "user8", resourcesShared: 3 },
-    { id: 9, username: "user9", resourcesShared: 11 },
-    { id: 10, username: "user10", resourcesShared: 6 },
-    { id: 11, username: "user11", resourcesShared: 20 },
-    { id: 12, username: "user12", resourcesShared: 8 },
+  const feedbacks = [
+    { id: 1, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 2, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 3, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 4, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 5, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 6, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 7, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 8, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 9, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 10, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 11, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 12, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 13, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 14, username: "user2", message: "Good service, but could be improved.", rating: 4 },
+    { id: 15, username: "user1", message: "Great product, I love it!", rating: 5 },
+    { id: 16, username: "user2", message: "Good service, but could be improved.", rating: 4 },
     // ... add more mock data as needed
   ];
 
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const totalPages = Math.ceil(feedbacks.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const handleDeactivate = (userId) => {
-    // Implement deactivation logic here
-    console.log(`Deactivate user with ID: ${userId}`);
-  };
-
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6 mt-10">User Resource Management</h1>
-      <UserResourceTable
-        users={users}
+      <h1 className="text-2xl font-semibold text-gray-900 mb-6 mt-10">Feedback Management</h1>
+      <FeedbackTable
+        feedbacks={feedbacks}
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
         onPageChange={handlePageChange}
-        onDeactivate={handleDeactivate}
       />
       <Pagination
         currentPage={currentPage}
@@ -159,4 +152,4 @@ const AdminUserManagement = () => {
   );
 };
 
-export default AdminUserManagement;
+export default AdminFeedbackSystem;
