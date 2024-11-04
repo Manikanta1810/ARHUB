@@ -1,13 +1,35 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../utils/AuthContext';
 
 export default function UserHeader() {
+
+  const navigate = useNavigate();
+
+  const {logout} = useAuth();
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
+
+  
+
+const handleLogout = async () => {
+  try{
+    await logout();
+    navigate('/');
+  }
+  catch(error){
+    console.log("logout functionality failed ")
+  }
+  }
+
 
   return (
     <header className={isDarkTheme ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}>
@@ -87,7 +109,7 @@ export default function UserHeader() {
                   <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                     <a href="/profile" className={`block px-4 py-2 text-sm ${isDarkTheme ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">Profile</a>
                     <a href="/mylist" className={`block px-4 py-2 text-sm ${isDarkTheme ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">My List</a>
-                    <a href="/" className={`block px-4 py-2 text-sm ${isDarkTheme ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem">Logout</a>
+                    <a className={`block px-4 py-2 text-sm ${isDarkTheme ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'}`} role="menuitem" onClick={handleLogout}>Logout</a>
                   </div>
                 </div>
               )}

@@ -13,8 +13,8 @@ const LandingPage = () => {
       <UserHero />
       <UserCards />
       <SectionOne />
-      <SectionTwo />
-      <SectionThree />
+      {/* <SectionTwo />
+      <SectionThree /> */}
       <UserFooter />
     </div>
   )

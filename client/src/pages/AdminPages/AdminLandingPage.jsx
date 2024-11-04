@@ -5,6 +5,8 @@ import { UserCircle, ChevronDown, LayoutDashboard, Users, MessageSquare } from '
 import AdminUserManagement from './AdminUserManagement';
 import AdminDashboard from './AdminDashboard';
 import AdminFeedbackSystem from './AdminFeedbackSystem';
+import { useAuth } from '../../utils/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ activeItem, setActiveItem }) => {
   const menuItems = [
@@ -36,6 +38,17 @@ const Sidebar = ({ activeItem, setActiveItem }) => {
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Optionally, show an error message to the user
+    }
+  };
 
   return (
     <div className="bg-white shadow-md p-4 flex justify-end">
@@ -52,7 +65,7 @@ const Header = () => {
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               Profile
             </a>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <a  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
               Logout
             </a>
           </div>
@@ -66,7 +79,11 @@ const Header = () => {
 
 
 const AdminLandingPage = () => {
+  
+
   const [activeItem, setActiveItem] = useState('Dashboard');
+
+  
 
   return (
     <div className="flex h-screen">
