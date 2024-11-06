@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from './utils/AuthContext';
 import { PublicRoute , ProtectedRoute } from './utils/RouteComponent';
 
+import { ThemeProvider } from './contexts/ThemeContext';
+
 import LoginPage from "./pages/CommonPages/LoginPage";
 import RegisterPage from "./pages/CommonPages/RegisterPage";
 import LandingPage from "./pages/UserPages/LandingPage";
@@ -10,18 +12,20 @@ import FeedbackPage from "./pages/UserPages/FeedbackPage";
 import UserProfilePage from "./pages/UserPages/UserProfilePage";
 import AdminLandingPage from "./pages/AdminPages/AdminLandingPage";
 import UserList from "./pages/UserPages/UserList";
-import LanguageSelector from './LanguageSelector';
 import NewsEventPage from './pages/UserPages/NewsEventPage';
 import DATPage from './pages/UserPages/DATPage';
 import DiscussionForumPage from './pages/UserPages/DsicussionForumPage';
 import ARBotPage from './pages/UserPages/ARBotPage';
+import TranslateHeader from './Translateheader';
+
 
 
 const App = () => {
   return (
     <AuthProvider>
+      <ThemeProvider>
       <div>
-        <LanguageSelector />
+        <TranslateHeader />
         <ARBotPage />
         <Routes>
           <Route path="/" element={
@@ -91,6 +95,7 @@ const App = () => {
           } />
         </Routes>
       </div>
+      </ThemeProvider>
     </AuthProvider>
   );
 };

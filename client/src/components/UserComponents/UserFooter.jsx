@@ -2,10 +2,12 @@
 import React from 'react'
 // eslint-disable-next-line no-unused-vars
 import { Facebook, Twitter, Instagram, Linkedin, Mail } from 'lucide-react'
+import { useTheme } from '../../contexts/ThemeContext'
 
 export default function UserFooter() {
+  const { isDarkTheme } = useTheme();
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className={isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white-900 text-black'}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="mb-8 md:mb-0">

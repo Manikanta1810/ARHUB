@@ -3,7 +3,7 @@ import { Send, User, Bot, X } from 'lucide-react';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: "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", // Make sure to add your API key to .env file
+  apiKey: "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",
   dangerouslyAllowBrowser: true // Only for development, handle API calls through backend in production
 });
 
