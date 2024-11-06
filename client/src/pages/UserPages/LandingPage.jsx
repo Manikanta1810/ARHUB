@@ -5,6 +5,8 @@ import UserFooter from "../../components/UserComponents/UserFooter"
 import SectionOne from "../../components/UserComponents/SectionOne"
 import SectionTwo from "../../components/UserComponents/Sectiontwo"
 import SectionThree from "../../components/UserComponents/SectionThree"
+import MoreButton from "../../components/UserComponents/MoreButton"
+
 
 const LandingPage = () => {
   return (
@@ -13,8 +15,7 @@ const LandingPage = () => {
       <UserHero />
       <UserCards />
       <SectionOne />
-      {/* <SectionTwo />
-      <SectionThree /> */}
+      <MoreButton />
       <UserFooter />
     </div>
   )

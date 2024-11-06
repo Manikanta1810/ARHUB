@@ -40,10 +40,11 @@ const handleLogout = async () => {
           {/* Centered navigation */}
           <nav className="flex-1 flex justify-center space-x-6">
             <a href="/home" className="hover:text-gray-300">Home</a>
-            <a href="#" className="hover:text-gray-300">News</a>
-            <a href="#" className="hover:text-gray-300">Discussions</a>
+            <a href="/news" className="hover:text-gray-300">News</a>
+            <a href="/discussion" className="hover:text-gray-300">Discussions</a>
+            <a href="/dat" className="hover:text-gray-300">DA Tech's</a>
+            <a href="/arbot" className="hover:text-gray-300">AR BOT</a>
             <a href="/feedback" className="hover:text-gray-300">Feedback</a>
-            <a href="#" className="hover:text-gray-300">Settings</a>
           </nav>
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
