@@ -1,10 +1,10 @@
-
-
 // import React, { useState, useEffect } from 'react';
 // import { Upload } from 'lucide-react';
 // import UserHeader from '../../components/UserComponents/UserHeader';
 // import { useAuth } from '../../utils/AuthContext';
-// import axios from 'axios';
+// import { doc, getDoc, setDoc } from 'firebase/firestore';
+// import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// import { firestore, storage } from '../../firebase';
 
 // const UserProfileManagement = () => {
 //   const { user } = useAuth();
@@ -23,13 +23,20 @@
 //   const [newImage, setNewImage] = useState(null);
 
 //   useEffect(() => {
-//     fetchUserProfile();
+//     if (user) {
+//       fetchUserProfile();
+//     }
 //   }, [user]);
 
 //   const fetchUserProfile = async () => {
 //     try {
-//       const response = await axios.get(`http://localhost:5000/user-profile/${user.email}`);
-//       setProfile(response.data);
+//       const profileRef = doc(firestore, 'user_profile', user.uid);
+//       const profileSnap = await getDoc(profileRef);
+//       if (profileSnap.exists()) {
+//         setProfile(profileSnap.data());
+//       } else {
+//         console.error('User profile not found');
+//       }
 //     } catch (error) {
 //       console.error('Error fetching user profile:', error);
 //     }
@@ -54,21 +61,20 @@
 
 //   const handleSave = async () => {
 //     try {
-//       const formData = new FormData();
-//       Object.keys(profile).forEach(key => {
-//         formData.append(key, profile[key] || '');
-//       });
+//       let updatedProfile = { ...profile };
 //       if (newImage) {
-//         formData.append('image', newImage);
+//         const imageRef = ref(storage, `profile_images/${user.uid}`);
+//         await uploadBytes(imageRef, newImage);
+//         const imageUrl = await getDownloadURL(imageRef);
+//         updatedProfile.image_url = imageUrl;
 //       }
-//       const response = await axios.post('http://localhost:5000/update-profile', formData, {
-//         headers: { 'Content-Type': 'multipart/form-data' }
-//       });
-//       console.log(response.data);
-//       setProfile(response.data.profile);
+//       const profileRef = doc(firestore, 'user_profile', user.uid);
+//       await setDoc(profileRef, updatedProfile, { merge: true });
+//       setProfile(updatedProfile);
 //       setIsEditing(false);
+//       setNewImage(null);
 //     } catch (error) {
-//       console.error('Error updating profile:', error.response ? error.response.data : error.message);
+//       console.error('Error updating profile:', error);
 //     }
 //   };
 
@@ -220,9 +226,11 @@ import { useAuth } from '../../utils/AuthContext';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from '../../firebase';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const UserProfileManagement = () => {
   const { user } = useAuth();
+  const { isDarkTheme } = useTheme();
   const [profile, setProfile] = useState({
     username: '',
     first_name: '',
@@ -294,28 +302,36 @@ const UserProfileManagement = () => {
   };
 
   return (
-    <div>
+    <div className={isDarkTheme ? 'bg-gray-900' : 'bg-white'}>
       <UserHeader />
-      <div className="min-h-screen bg-gray-100">
-        <header className="bg-white shadow">
+      <div className={`min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-100'}`}>
+        <header className={`${isDarkTheme ? 'bg-gray-800 shadow-dark' : 'bg-white shadow'}`}>
           <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome, {profile.username || profile.first_name || 'User'}</h1>
-            <p className="mt-1 text-sm text-gray-500">{new Date().toLocaleDateString()}</p>
+            <h1 className={`text-3xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
+              Welcome, {profile.username || profile.first_name || 'User'}
+            </h1>
+            <p className={`mt-1 text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-500'}`}>
+              {new Date().toLocaleDateString()}
+            </p>
           </div>
         </header>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="border-b border-gray-200 pb-5 flex justify-between items-center">
+            <div className={`border-b ${isDarkTheme ? 'border-gray-700' : 'border-gray-200'} pb-5 flex justify-between items-center`}>
               <div className="flex items-center space-x-5">
                 <div className="relative">
                   <img
                     src={profile.image_url || "https://via.placeholder.com/150"}
                     alt="Profile"
-                    className="h-32 w-32 rounded-full object-cover border-4 border-white shadow"
+                    className={`h-32 w-32 rounded-full object-cover border-4 ${
+                      isDarkTheme ? 'border-gray-700' : 'border-white'
+                    } shadow`}
                   />
                   {isEditing && (
-                    <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer shadow">
-                      <Upload className="h-5 w-5 text-gray-500" />
+                    <label htmlFor="profile-upload" className={`absolute bottom-0 right-0 ${
+                      isDarkTheme ? 'bg-gray-700' : 'bg-white'
+                    } rounded-full p-2 cursor-pointer shadow`}>
+                      <Upload className={`h-5 w-5 ${isDarkTheme ? 'text-gray-300' : 'text-gray-500'}`} />
                     </label>
                   )}
                   <input
@@ -328,8 +344,12 @@ const UserProfileManagement = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{profile.username || profile.first_name || 'User'}</h2>
-                  <p className="text-sm text-gray-500">{profile.email}</p>
+                  <h2 className={`text-2xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
+                    {profile.username || profile.first_name || 'User'}
+                  </h2>
+                  <p className={`text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {profile.email}
+                  </p>
                 </div>
               </div>
               <button
@@ -341,8 +361,11 @@ const UserProfileManagement = () => {
             </div>
             
             <div className="mt-10 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              {/* Username Field */}
               <div className="sm:col-span-3">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                <label htmlFor="username" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>Username</label>
                 <input
                   type="text"
                   name="username"
@@ -350,11 +373,19 @@ const UserProfileManagement = () => {
                   value={profile.username || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
+
+              {/* First Name Field */}
               <div className="sm:col-span-3">
-                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">First Name</label>
+                <label htmlFor="first_name" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>First Name</label>
                 <input
                   type="text"
                   name="first_name"
@@ -362,11 +393,19 @@ const UserProfileManagement = () => {
                   value={profile.first_name || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
+
+              {/* Last Name Field */}
               <div className="sm:col-span-3">
-                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Last Name</label>
+                <label htmlFor="last_name" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>Last Name</label>
                 <input
                   type="text"
                   name="last_name"
@@ -374,22 +413,38 @@ const UserProfileManagement = () => {
                   value={profile.last_name || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
+
+              {/* Email Field */}
               <div className="sm:col-span-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                <label htmlFor="email" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>Email</label>
                 <input
                   type="email"
                   name="email"
                   id="email"
                   value={profile.email || ''}
                   disabled={true}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3 bg-gray-100"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-800 border-gray-700 text-gray-400' 
+                      : 'bg-gray-100 border-gray-300 text-gray-500'
+                  }`}
                 />
               </div>
+
+              {/* Address Field */}
               <div className="sm:col-span-4">
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+                <label htmlFor="address" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>Address</label>
                 <input
                   type="text"
                   name="address"
@@ -397,11 +452,19 @@ const UserProfileManagement = () => {
                   value={profile.address || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
+
+              {/* LinkedIn URL Field */}
               <div className="sm:col-span-4">
-                <label htmlFor="linkedin_url" className="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                <label htmlFor="linkedin_url" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>LinkedIn URL</label>
                 <input
                   type="text"
                   name="linkedin_url"
@@ -409,11 +472,19 @@ const UserProfileManagement = () => {
                   value={profile.linkedin_url || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
+
+              {/* GitHub URL Field */}
               <div className="sm:col-span-4">
-                <label htmlFor="github_url" className="block text-sm font-medium text-gray-700">GitHub URL</label>
+                <label htmlFor="github_url" className={`block text-sm font-medium ${
+                  isDarkTheme ? 'text-gray-300' : 'text-gray-700'
+                }`}>GitHub URL</label>
                 <input
                   type="text"
                   name="github_url"
@@ -421,7 +492,11 @@ const UserProfileManagement = () => {
                   value={profile.github_url || ''}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                  className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md py-2 px-3 ${
+                    isDarkTheme 
+                      ? 'bg-gray-700 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  } ${!isEditing && isDarkTheme ? 'bg-gray-800' : ''}`}
                 />
               </div>
             </div>

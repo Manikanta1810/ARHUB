@@ -428,7 +428,7 @@ const UserHeader = () => {
             <a href="/news" className={`hover:text-gray-300 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>News</a>
             <a href="/discussion" className={`hover:text-gray-300 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Discussions</a>
             <a href="/dat" className={`hover:text-gray-300 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>DA Tech's</a>
-            
+            <a href='/aboutus' className={`hover:text-gray-300 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>About Us</a>
             <a href="/feedback" className={`hover:text-gray-300 ${isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Feedback</a>
           </nav>
           <div className="flex items-center space-x-4">

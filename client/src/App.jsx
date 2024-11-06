@@ -17,6 +17,7 @@ import DATPage from './pages/UserPages/DATPage';
 import DiscussionForumPage from './pages/UserPages/DsicussionForumPage';
 import ARBotPage from './pages/UserPages/ARBotPage';
 import TranslateHeader from './Translateheader';
+import AboutusPage from './pages/UserPages/AboutusPage';
 
 
 
@@ -61,6 +62,12 @@ const App = () => {
           <Route path="/dat" element={
             <ProtectedRoute>
               <DATPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/aboutus" element={
+            <ProtectedRoute>
+              <AboutusPage />
             </ProtectedRoute>
           } />
 
