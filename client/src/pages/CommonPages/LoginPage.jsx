@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -27,8 +25,6 @@ export default function LoginPage() {
           navigate("/home", { replace: true });
         }, 2000);
       } else {
-        // This case should not occur due to the check in the login function,
-        // but we'll keep it as an extra precaution
         toast.error("Your account has been deactivated. Please contact the administrator.");
       }
     } catch (error) {
@@ -55,8 +51,6 @@ export default function LoginPage() {
           navigate("/home", { replace: true });
         }, 2000);
       } else {
-        // This case should not occur due to the check in the loginWithGoogle function,
-        // but we'll keep it as an extra precaution
         toast.error("Your account has been deactivated. Please contact the administrator.");
       }
     } catch (error) {
@@ -74,7 +68,12 @@ export default function LoginPage() {
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <div className="w-full lg:w-1/2 flex flex-col p-12">
         <div className="mb-8">
-          <img src="/arhub_logo.png" alt="AR HUB" className="h-16" />
+          <img
+            src="/arhub_logo.png"
+            alt="AR HUB Logo"
+            className="h-16"
+            aria-hidden="true"
+          />
         </div>
         <div className="flex-grow flex items-center justify-center">
           <div className="max-w-md w-full space-y-8">
@@ -82,8 +81,17 @@ export default function LoginPage() {
               <h1 className="text-4xl font-bold">WELCOME</h1>
               <h2 className="mt-2 text-gray-600">Welcome to Accessibility Resource Hub</h2>
             </div>
-            <button onClick={handleGoogleSignIn} className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-              <img src="/google_icon.png" alt="Google logo" className="h-5 w-5 mr-2" />
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              aria-label="Sign in with Google"
+            >
+              <img
+                src="/google_icon.png"
+                alt=""
+                className="h-5 w-5 mr-2"
+                aria-hidden="true"
+              />
               Sign in With Google
             </button>
             <div className="relative">
@@ -97,6 +105,9 @@ export default function LoginPage() {
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
+                  <label htmlFor="email-address" className="sr-only">
+                    Email address
+                  </label>
                   <input
                     id="email-address"
                     name="email"
@@ -110,6 +121,9 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
+                  <label htmlFor="password" className="sr-only">
+                    Password
+                  </label>
                   <input
                     id="password"
                     name="password"
@@ -128,6 +142,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  aria-label="Login"
                 >
                   Login
                 </button>
@@ -145,7 +160,7 @@ export default function LoginPage() {
       <div className="hidden lg:block lg:w-1/2">
         <img
           src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJvb2slMjBwYXBlcnxlbnwwfHwwfHx8MA%3D%3D"
-          alt="Decorative image of colorful book pages"
+          alt="Colorful book pages"
           className="object-cover w-full h-full"
         />
       </div>
